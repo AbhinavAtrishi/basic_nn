@@ -2,38 +2,37 @@ import numpy as np
 
 
 class InputLayer:
-    def __init__(self, x, dimensions=(1,2)):
+    def __init__(self, x, dimensions=(1,2), activation='sigmoid'):
         self.size = dimensions
         self.upstream_gradient = None
         self.weights = np.random.random(dimensions)
         self.bias = 0
         self.x = x
+        self.activation = activation
+        self.output = None
+
+    def __activate(self, x, deriv=False):
+        if self.activation == 'sigmoid':
+            if deriv:
+                return x * (1 - x)
+            return 1/(1 + np.exp(-x))
+        else:
+            raise NotImplementedError
 
     def forward(self):
-        return (self.weights @ self.x) + self.bias
+        self.output = self.__activate((self.weights @ self.x) + self.bias)
+        return self.output
 
     def backprop(self, lr=1):
         if self.upstream_gradient is not None:
-            dzdw = self.upstream_gradient @ self.x.T
-            dzdb = np.sum(self.upstream_gradient)
+            activation_upstream = self.upstream_gradient * self.__activate(self.output, True)
+            dzdw = activation_upstream @ self.x.T
+            dzdb = np.sum(activation_upstream)
 
             self.weights = self.weights - (lr * dzdw)
             self.bias = self.bias - (lr * dzdb)
 
             self.upstream_gradient = None
-
-
-class Sigmoid:
-    def __init__(self):
-        self.previous_out = None
-        self.upstream_gradient = None
-
-    def forward(self, x):
-        self.previous_out = 1/(1 + np.exp(-x))
-        return self.previous_out
-
-    def backprop(self, lr=1):
-        return self.upstream_gradient * self.previous_out * (1 - self.previous_out)
 
 
 class TerminalLayer:
