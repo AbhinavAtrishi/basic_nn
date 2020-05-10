@@ -16,11 +16,19 @@ class InputLayer:
             if deriv:
                 return x * (1 - x)
             return 1/(1 + np.exp(-x))
+        elif self.activation == 'relu':
+            if deriv:
+                return 1 * (x > 0)
+            return x * (x > 0)
+        elif self.activation == 'linear':
+            if deriv:
+                return np.ones(x.shape)
+            return x
         else:
             raise NotImplementedError
 
-    def forward(self):
-        self.output = self.__activate((self.weights @ self.x) + self.bias)
+    def forward(self, x):
+        self.output = self.__activate((self.weights @ x) + self.bias)
         return self.output
 
     def backprop(self, lr=1):
