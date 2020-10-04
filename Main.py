@@ -7,7 +7,7 @@ np.random.seed(1)
 # Current implementation supports 1 layer neural networks. These can learn simple linear separations
 # Here we are implementing a simple AND gate
 x = np.array([[0, 0, 1, 1], [0, 1, 0, 1]])
-y = np.array([0, 1, 10, 11])
+y = np.array([0, 0, 0, 1])
 # x = np.array([[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]])
 # y = np.array([0, 11, 22, 33, 44])
 epochs = 1000
